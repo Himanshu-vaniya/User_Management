@@ -1,17 +1,21 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { UserService } from '../../core/services/user';
 import { User } from '../../shared/models/user.model';
 import { NotificationService } from '../../core/services/notification';
 import { DeleteConfirmationDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { EmptyState } from '../../shared/components/empty-state/empty-state';
+import { SearchBox } from '../../shared/components/search-box/search-box';
 import { HttpErrorResponse } from '@angular/common/http';
 import { tap } from 'rxjs';
 
@@ -26,16 +30,32 @@ import { tap } from 'rxjs';
     MatProgressSpinnerModule,
     MatCardModule,
     MatTooltipModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSortModule,
+    MatPaginatorModule,
+    EmptyState,
+    SearchBox
   ],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
 export class Users implements OnInit {
-  users: User[] = [];
+  dataSource = new MatTableDataSource<User>([]);
   displayedColumns: string[] = ['name', 'email', 'role', 'active', 'actions'];
   isLoading = true;
   errorMessage: string | null = null;
+
+  @ViewChild(MatSort) set matSort(sort: MatSort) {
+    if (sort) {
+      this.dataSource.sort = sort;
+    }
+  }
+
+  @ViewChild(MatPaginator) set matPaginator(paginator: MatPaginator) {
+    if (paginator) {
+      this.dataSource.paginator = paginator;
+    }
+  }
 
   constructor(
     private userService: UserService,
@@ -47,6 +67,25 @@ export class Users implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+
+    // Set custom sort accessor to combine firstName and lastName for the "name" column
+    this.dataSource.sortingDataAccessor = (item: User, property: string) => {
+      switch (property) {
+        case 'name':
+          return `${item.firstName} ${item.lastName}`.toLowerCase();
+        default:
+          return (item as any)[property];
+      }
+    };
+
+    // Set custom filter predicate to match name, email, or role
+    this.dataSource.filterPredicate = (data: User, filter: string) => {
+      const searchStr = filter.toLowerCase();
+      const fullName = `${data.firstName} ${data.lastName}`.toLowerCase();
+      const email = data.email.toLowerCase();
+      const role = data.role.toLowerCase();
+      return fullName.includes(searchStr) || email.includes(searchStr) || role.includes(searchStr);
+    };
   }
 
   loadUsers(): void {
@@ -56,7 +95,7 @@ export class Users implements OnInit {
     this.userService.getUsers().subscribe({
       next: (response) => {
         if (response.success && response.data) {
-          this.users = response.data;
+          this.dataSource.data = response.data;
         } else {
           this.errorMessage = response.message || 'Failed to load users';
         }
@@ -69,6 +108,10 @@ export class Users implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  onSearch(query: string): void {
+    this.dataSource.filter = query.trim().toLowerCase();
   }
 
   onAddUser(): void {
@@ -95,37 +138,16 @@ export class Users implements OnInit {
               if (response.success) {
                 this.notificationService.success('User deleted successfully.');
                 this.loadUsers();
-              } else {
-                this.notificationService.error(response.message || 'Unable to delete user.');
               }
             },
             error: (err: HttpErrorResponse) => {
-              this.handleDeleteError(err);
+              if (err.status === 404) {
+                this.loadUsers();
+              }
             }
           })
         )
       }
     });
-  }
-
-  private handleDeleteError(err: HttpErrorResponse): void {
-    let errorMsg = 'Unable to delete user.';
-    if (err.error && err.error.message) {
-      errorMsg = err.error.message;
-    } else if (err.status === 400) {
-      errorMsg = 'Invalid request. Unable to delete user.';
-    } else if (err.status === 403) {
-      errorMsg = 'You do not have permission to delete this user.';
-    } else if (err.status === 404) {
-      errorMsg = 'User not found.';
-      this.loadUsers();
-    } else if (err.status === 409) {
-      errorMsg = 'User cannot be deleted because it is referenced elsewhere.';
-    } else if (err.status === 500) {
-      errorMsg = 'Server error. Unable to delete user.';
-    } else if (err.status === 0) {
-      errorMsg = 'Network error. Please check your connection.';
-    }
-    this.notificationService.error(errorMsg);
   }
 }

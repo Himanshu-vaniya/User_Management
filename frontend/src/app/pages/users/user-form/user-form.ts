@@ -174,24 +174,6 @@ export class UserForm implements OnInit {
   private handleError(err: HttpErrorResponse): void {
     this.isSubmitting = false;
     this.userForm.enable();
-
-    let errorMsg = 'An unexpected error occurred. Please try again later.';
-    
-    if (err.error && err.error.message) {
-      errorMsg = err.error.message;
-    } else if (err.status === 400) {
-      errorMsg = 'Invalid data provided. Please check the form fields.';
-    } else if (err.status === 409) {
-      errorMsg = 'User or email already exists.';
-    } else if (err.status === 401) {
-      errorMsg = 'Unauthorized. Please log in again.';
-    } else if (err.status === 403) {
-      errorMsg = 'You do not have permission to perform this action.';
-    } else if (err.status === 404) {
-      errorMsg = 'User not found.';
-    }
-    
-    this.notificationService.error(errorMsg);
     this.cdr.detectChanges();
   }
 }

@@ -1,1 +1,6 @@
-<p>loader works!</p>
+<div class="global-loader-overlay" *ngIf="loadingService.loading$ | async">
+  <div class="loader-container">
+    <mat-spinner diameter="60" strokeWidth="6"></mat-spinner>
+    <p class="loader-text">Loading...</p>
+  </div>
+</div>

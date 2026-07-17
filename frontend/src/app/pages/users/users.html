@@ -10,6 +10,15 @@
     </mat-card-header>
 
     <mat-card-content>
+      <!-- Search Bar -->
+      <div class="search-bar-container" *ngIf="!isLoading && !errorMessage && dataSource.data.length > 0">
+        <app-search-box 
+          placeholder="Search by name, email, or role..." 
+          (search)="onSearch($event)" 
+          (clear)="onSearch('')">
+        </app-search-box>
+      </div>
+
       <!-- Loading State -->
       <div class="loading-state" *ngIf="isLoading">
         <mat-spinner diameter="40"></mat-spinner>
@@ -23,36 +32,40 @@
       </div>
 
       <!-- Empty State -->
-      <div class="empty-state" *ngIf="!isLoading && !errorMessage && users.length === 0">
-        <mat-icon class="empty-icon">people_outline</mat-icon>
-        <p>No users found.</p>
-      </div>
+      <app-empty-state 
+        *ngIf="!isLoading && !errorMessage && (dataSource.data.length === 0 || dataSource.filteredData.length === 0)"
+        [icon]="dataSource.data.length === 0 ? 'people_outline' : 'search_off'"
+        [title]="dataSource.data.length === 0 ? 'No users found' : 'No matches found'"
+        [description]="dataSource.data.length === 0 ? 'Try adding a new user to get started.' : 'No users match your search query. Try clearing or editing your search.'"
+        [actionText]="dataSource.data.length === 0 ? 'Add User' : ''"
+        (action)="onAddUser()">
+      </app-empty-state>
 
       <!-- Table State -->
-      <div class="table-container" *ngIf="!isLoading && !errorMessage && users.length > 0">
-        <table mat-table [dataSource]="users" class="mat-elevation-z0">
+      <div class="table-container" *ngIf="!isLoading && !errorMessage && dataSource.filteredData.length > 0">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z0">
           
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
             <td mat-cell *matCellDef="let user"> {{ user.firstName }} {{ user.lastName }} </td>
           </ng-container>
 
           <!-- Email Column -->
           <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef> Email </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
             <td mat-cell *matCellDef="let user"> {{ user.email }} </td>
           </ng-container>
 
           <!-- Role Column -->
           <ng-container matColumnDef="role">
-            <th mat-header-cell *matHeaderCellDef> Role </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
             <td mat-cell *matCellDef="let user"> {{ user.role }} </td>
           </ng-container>
 
           <!-- Active Column -->
           <ng-container matColumnDef="active">
-            <th mat-header-cell *matHeaderCellDef> Active </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Active </th>
             <td mat-cell *matCellDef="let user"> 
               <mat-icon [color]="user.active ? 'primary' : 'warn'">
                 {{ user.active ? 'check_circle' : 'cancel' }}
@@ -76,8 +89,10 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
+
+        <!-- Paginator -->
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons class="mat-elevation-z0"></mat-paginator>
       </div>
     </mat-card-content>
   </mat-card>
 </div>
-
