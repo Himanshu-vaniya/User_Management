@@ -7,8 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { UserService } from '../../core/services/user';
 import { User } from '../../shared/models/user.model';
+import { NotificationService } from '../../core/services/notification';
+import { DeleteConfirmationDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { HttpErrorResponse } from '@angular/common/http';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-users',
@@ -20,7 +25,8 @@ import { User } from '../../shared/models/user.model';
     MatIconModule,
     MatProgressSpinnerModule,
     MatCardModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ],
   templateUrl: './users.html',
   styleUrl: './users.css',
@@ -34,7 +40,9 @@ export class Users implements OnInit {
   constructor(
     private userService: UserService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +80,52 @@ export class Users implements OnInit {
   }
 
   onDeleteUser(user: User): void {
-    // Placeholder for future phase
-    console.log('Open Delete Confirmation for User', user.id);
+    this.dialog.open(DeleteConfirmationDialogComponent, {
+      width: '440px',
+      disableClose: true,
+      data: {
+        title: 'Delete User',
+        message: 'Are you sure you want to delete this user?',
+        itemName: `${user.firstName} ${user.lastName}`,
+        confirmText: 'Delete',
+        confirmColor: 'warn',
+        onConfirm: () => this.userService.deleteUser(user.id).pipe(
+          tap({
+            next: (response) => {
+              if (response.success) {
+                this.notificationService.success('User deleted successfully.');
+                this.loadUsers();
+              } else {
+                this.notificationService.error(response.message || 'Unable to delete user.');
+              }
+            },
+            error: (err: HttpErrorResponse) => {
+              this.handleDeleteError(err);
+            }
+          })
+        )
+      }
+    });
+  }
+
+  private handleDeleteError(err: HttpErrorResponse): void {
+    let errorMsg = 'Unable to delete user.';
+    if (err.error && err.error.message) {
+      errorMsg = err.error.message;
+    } else if (err.status === 400) {
+      errorMsg = 'Invalid request. Unable to delete user.';
+    } else if (err.status === 403) {
+      errorMsg = 'You do not have permission to delete this user.';
+    } else if (err.status === 404) {
+      errorMsg = 'User not found.';
+      this.loadUsers();
+    } else if (err.status === 409) {
+      errorMsg = 'User cannot be deleted because it is referenced elsewhere.';
+    } else if (err.status === 500) {
+      errorMsg = 'Server error. Unable to delete user.';
+    } else if (err.status === 0) {
+      errorMsg = 'Network error. Please check your connection.';
+    }
+    this.notificationService.error(errorMsg);
   }
 }

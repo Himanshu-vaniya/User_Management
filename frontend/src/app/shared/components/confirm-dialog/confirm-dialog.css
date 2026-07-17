@@ -1,0 +1,94 @@
+.confirm-dialog-container {
+  padding: 8px;
+  max-width: 420px;
+  font-family: 'Roboto', 'Inter', sans-serif;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.warning-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-title {
+  margin: 0 !important;
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: var(--mat-sys-on-surface);
+}
+
+.dialog-content {
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 20px;
+  padding: 0 !important;
+}
+
+.confirm-message {
+  margin: 0 0 12px 0;
+}
+
+.item-name-container {
+  background-color: var(--mat-sys-surface-container-high, #f8f9fa);
+  border-left: 4px solid var(--mat-sys-error, #ba1a1a);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin: 12px 0;
+}
+
+.item-name {
+  font-weight: 600;
+  color: var(--mat-sys-on-surface);
+  font-size: 1.05rem;
+  word-break: break-all;
+}
+
+.warning-text {
+  font-size: 0.85rem;
+  color: var(--mat-sys-error, #ba1a1a);
+  margin: 12px 0 0 0;
+  font-weight: 500;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 0 0 0 !important;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-spinner {
+  margin-right: 4px;
+}
+
+/* Micro-animations and premium effects */
+button[mat-raised-button] {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button[mat-raised-button]:not([disabled]):hover {
+  transform: translateY(-1px);
+}
+
+button[mat-raised-button]:not([disabled]):active {
+  transform: translateY(0);
+}
