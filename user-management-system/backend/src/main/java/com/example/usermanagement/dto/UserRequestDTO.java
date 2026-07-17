@@ -17,7 +17,7 @@ public class UserRequestDTO {
     private String lastName;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @Email(message = "Invalid email format")
     @Size(max = 255, message = "Email cannot exceed 255 characters")
     private String email;
 

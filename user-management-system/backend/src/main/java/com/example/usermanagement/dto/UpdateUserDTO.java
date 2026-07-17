@@ -12,7 +12,7 @@ public class UpdateUserDTO {
     @Size(max = 100, message = "Last name cannot exceed 100 characters")
     private String lastName;
 
-    @Email(message = "Email should be valid")
+    @Email(message = "Invalid email format")
     @Size(max = 255, message = "Email cannot exceed 255 characters")
     private String email;
 
