@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,7 +33,8 @@ export class Users implements OnInit {
 
   constructor(
     private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -62,13 +64,11 @@ export class Users implements OnInit {
   }
 
   onAddUser(): void {
-    // Placeholder for future phase
-    console.log('Navigate to Add User');
+    this.router.navigate(['/users/new']);
   }
 
   onEditUser(user: User): void {
-    // Placeholder for future phase
-    console.log('Navigate to Edit User', user.id);
+    this.router.navigate(['/users', user.id, 'edit']);
   }
 
   onDeleteUser(user: User): void {

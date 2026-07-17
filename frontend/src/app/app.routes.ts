@@ -20,6 +20,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/users/users').then(m => m.Users)
   },
   {
+    path: 'users/new',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/users/user-form/user-form').then(m => m.UserForm)
+  },
+  {
+    path: 'users/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/users/user-form/user-form').then(m => m.UserForm)
+  },
+  {
     path: 'roles',
     canActivate: [authGuard],
     loadComponent: () => import('./pages/roles/roles').then(m => m.Roles)
