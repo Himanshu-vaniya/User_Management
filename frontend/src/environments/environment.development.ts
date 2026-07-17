@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080',
+  apiUrl: '',
   appName: 'User Management System',
   version: '1.0.0'
 };

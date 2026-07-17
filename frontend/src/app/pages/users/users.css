@@ -1,0 +1,59 @@
+.users-container {
+  padding: 24px;
+}
+
+.users-card {
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+}
+
+.error-state mat-icon,
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-actions {
+  width: 120px;
+  text-align: right;
+}
+
+th.mat-header-cell,
+td.mat-cell {
+  padding: 8px 16px;
+}
