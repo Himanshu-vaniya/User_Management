@@ -1,8 +1,8 @@
 export const API_ENDPOINTS = {
-  LOGIN: '/auth/login',
-  USERS: '/users',
-  ROLES: '/roles',
-  PERMISSIONS: '/permissions',
+  LOGIN: '/api/auth/login',
+  USERS: '/api/users',
+  ROLES: '/api/roles',
+  PERMISSIONS: '/api/permissions',
 };
 
 export const ROUTES = {
