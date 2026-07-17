@@ -11,6 +11,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { UserService } from '../../core/services/user';
+import { AuthService } from '../../core/services/auth';
 import { User } from '../../shared/models/user.model';
 import { NotificationService } from '../../core/services/notification';
 import { DeleteConfirmationDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
@@ -62,7 +63,8 @@ export class Users implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private dialog: MatDialog,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -149,5 +151,9 @@ export class Users implements OnInit {
         )
       }
     });
+  }
+
+  onLogout(): void {
+    this.authService.logout();
   }
 }
