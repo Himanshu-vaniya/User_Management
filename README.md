@@ -219,11 +219,9 @@ graph LR
 | Global Error Handling  | Completed      |
 
 ## 18. Learning Notes
-During the development of this project, several key concepts were reinforced:
-- **Angular Architecture**: Deepened understanding of component communication, Route Guards, and the importance of a well-structured `core` and `shared` module.
-- **Spring Boot APIs**: Gained practical experience in building clean REST APIs, utilizing DTOs to separate domain models from API contracts.
-- **Reactive Forms**: Mastered the use of `FormBuilder` and custom validators to create dynamic, responsive forms.
-- **Error Handling**: Learned how to effectively use HTTP Interceptors to catch and manage errors globally without cluttering component logic.
+- **Project Folder Structure**: I learned how the project is organized into different folders, making it easier to find files and understand the overall application structure.
+- **Backend Workflow**: I understood how a request moves through the application—from the Controller to the Service, then to the Repository, and finally to the Database, before the response is sent back to the frontend.
+- **Understanding a New Technology Stack**: Since Angular and Spring Boot were new to me, this task helped me understand how the frontend and backend work together to build a complete web application.
 
 ## 19. Laravel vs Spring Boot Reflection
 
