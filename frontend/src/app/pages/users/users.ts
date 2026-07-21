@@ -95,17 +95,29 @@ export class Users implements OnInit {
     this.errorMessage = null;
     this.cdr.detectChanges();
     this.userService.getUsers().subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.dataSource.data = response;
+          this.errorMessage = null;
+        } else if (response && response.success !== false && Array.isArray(response.data)) {
           this.dataSource.data = response.data;
-        } else {
+          this.errorMessage = null;
+        } else if (response && Array.isArray(response.data)) {
+          this.dataSource.data = response.data;
+          this.errorMessage = null;
+        } else if (response && response.success === false) {
           this.errorMessage = response.message || 'Failed to load users';
+        } else if (response && response.data !== undefined && response.data !== null) {
+          this.dataSource.data = Array.isArray(response.data) ? response.data : [response.data];
+          this.errorMessage = null;
+        } else {
+          this.errorMessage = response?.message || 'Failed to load users';
         }
         this.isLoading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        this.errorMessage = 'An error occurred while loading users. Please try again.';
+      error: (err: HttpErrorResponse) => {
+        this.errorMessage = err?.error?.message || 'An error occurred while loading users. Please check if the backend server is running.';
         this.isLoading = false;
         this.cdr.detectChanges();
       }

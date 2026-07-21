@@ -76,9 +76,9 @@ export class UserForm implements OnInit {
     this.cdr.detectChanges();
 
     this.userService.getUserById(id).subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          const user = response.data;
+      next: (response: any) => {
+        const user = response?.data || (response?.id ? response : null);
+        if (user) {
           this.userForm.patchValue({
             firstName: user.firstName,
             lastName: user.lastName,
@@ -87,7 +87,7 @@ export class UserForm implements OnInit {
             active: user.active
           });
         } else {
-          this.notificationService.error(response.message || 'Failed to load user data');
+          this.notificationService.error(response?.message || 'Failed to load user data');
           this.router.navigate(['/users']);
         }
         this.isLoading = false;
@@ -97,7 +97,7 @@ export class UserForm implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
         this.userForm.enable();
-        let errorMsg = 'An error occurred while loading user data.';
+        let errorMsg = err?.error?.message || 'An error occurred while loading user data.';
         if (err.status === 404) {
           errorMsg = 'User not found.';
         }
